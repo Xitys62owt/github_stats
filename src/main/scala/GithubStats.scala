@@ -20,7 +20,10 @@ class GithubServiceImpl(backend: SttpBackend[Identity, Any], token: Option[Strin
   private def makeRequest(url: String): Either[String, String] =
     val request = basicRequest.get(uri"$url")
       .header("Authorization", token.map(t => s"token $t").getOrElse(""))
-    request.send(backend).body
+    val response = request.send(backend)
+    response.body.left.map { errorBody =>
+      s"${response.code}: $errorBody"
+    }
   
   override def getUserInfo(username: String): Either[String, User] =
     makeRequest(s"https://api.github.com/users/$username").flatMap { json =>
