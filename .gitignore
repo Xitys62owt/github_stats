@@ -1,0 +1,5 @@
+!/.gitignore
+!/build.sbt
+!/src/
+!/src/**/*
+!README.md
